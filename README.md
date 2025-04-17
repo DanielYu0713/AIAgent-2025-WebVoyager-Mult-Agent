@@ -106,7 +106,7 @@ For **Windows users**, you can run the agent directly:
 - `--text_only`: Enable text-based navigation (without images).
 - `--temperature`: Control randomness of AI responses.
 
-## Results and Evaluation
+## Results and Evaluation (New Update)
 
 After execution, the system selects the lowest-priced product and generates a final report. Example output:
 
