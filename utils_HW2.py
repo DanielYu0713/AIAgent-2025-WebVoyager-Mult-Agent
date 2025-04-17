@@ -7,7 +7,6 @@ import logging
 import numpy as np
 from PIL import Image
 
-# HW2: 如果有需要可以引入 utils_webarena
 from utils_webarena import (
     fetch_browser_info, 
     fetch_page_accessibility_tree, 
@@ -270,6 +269,7 @@ def clip_message_and_obs_text_only(msg, max_tree_num):
                 clipped_msg = [curr_msg_clip] + clipped_msg
     return clipped_msg
 
+#HW2_轉台幣，仍然有些僻陋、持續改進
 def convert_price_to_twd(price_str, response_text):
     conversion_rate = 30 #預設美元
     if "€" in response_text:

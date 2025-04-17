@@ -39,7 +39,6 @@ from utils_HW2 import (  # HW2: 這裡改成 utils_HW2
 )
 
 def setup_logger(folder_path):
-    # HW2: 建立 logger，將日誌輸出到 agent.log
     log_file_path = os.path.join(folder_path, 'agent.log')
     logger = logging.getLogger()
     for handler in logger.handlers[:]:
@@ -55,7 +54,6 @@ def setup_logger(folder_path):
     logger.setLevel(logging.INFO)
 
 def driver_config(args):
-    # HW2: Selenium driver 設定
     options = webdriver.ChromeOptions()
     if args.save_accessibility_tree:
         args.force_device_scale = True
@@ -63,7 +61,6 @@ def driver_config(args):
         options.add_argument("--force-device-scale-factor=1")
     if args.headless:
         options.add_argument("--headless")
-        # HW2: 使用稍微更新的 user-agent
         options.add_argument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
     options.add_experimental_option("prefs", {
         "download.default_directory": args.download_dir,
@@ -159,9 +156,6 @@ def format_msg_text_only(it, init_msg, pdf_obs, warn_obs, ac_tree, prev_step_act
             }
 
 def call_gpt4v_api(args, openai_client, messages):
-    """
-    HW2: 包裝 GPT API 呼叫，並加入重試機制
-    """
     retry_times = 0
     while True:
         try:
@@ -223,9 +217,6 @@ def exec_action_refresh(driver_task):
         time.sleep(3)
 
 def exec_action_zoom(info, driver_task):
-    """
-    HW2: 執行縮放
-    """
     zoom_value = info['content'].strip()
     try:
         zoom_ratio = float(zoom_value)
@@ -245,17 +236,11 @@ def exec_action_zoom(info, driver_task):
     time.sleep(3)
 
 def exec_action_click(info, web_ele, driver_task):
-    """
-    HW2: 執行 click
-    """
     driver_task.execute_script("arguments[0].setAttribute('target', '_self')", web_ele)
     web_ele.click()
     time.sleep(3)
 
 def exec_action_type(info, web_ele, driver_task):
-    """
-    HW2: 執行 type
-    """
     warn_obs = ""
     type_content = info['content']
     ele_tag_name = web_ele.tag_name.lower()
@@ -297,9 +282,6 @@ def exec_action_type(info, web_ele, driver_task):
     return warn_obs
 
 def exec_action_scroll(info, web_eles, driver_task, args, obs_info):
-    """
-    HW2: 執行 scroll
-    """
     scroll_ele_number = info['number']
     scroll_content = info['content']
     if scroll_ele_number == "WINDOW":
@@ -333,7 +315,6 @@ def exec_action_scroll(info, web_eles, driver_task, args, obs_info):
     time.sleep(3)
 
 def sanitize_messages(messages):
-    # HW2: 用於隱藏 system 訊息的詳細內容
     sanitized = []
     for msg in messages:
         if msg.get("role") == "system":
@@ -499,6 +480,7 @@ def main():
                 # 這邊只是例子，Amazon就關閉trajectory
                 args.trajectory = False
 
+            
             current_history = SYSTEM_PREVIOUS_STEP
             logging.info(f"[Main] Processing website: {website}")
             driver_task = webdriver.Chrome(options=options)
@@ -611,7 +593,7 @@ def main():
                         get_webarena_accessibility_tree(driver_task, accessibility_tree_path)
                     b64_img = encode_image(img_path)
 
-                    # EGA（Error Grounding Agent）
+                    # HW2 EGA（Error Grounding Agent）
                     if it > 1 and activate_EGA:
                         EGA_messages = [{'role': 'system', 'content': ERROR_GROUNDING_AGENT_PROMPT}]
                         EGA_img = encode_image(img_path)
@@ -723,7 +705,7 @@ def main():
                 chosen_action = parts[2].strip() if len(parts) > 2 else ""
                 bot_thought = primary_thought
 
-                # 檢查是否連續動作相同
+                # HW2 檢查是否連續動作相同，下一個動作會考量(近兩次)History
                 if primary_thought and chosen_action.strip().lower() == primary_thought.strip().lower():
                     repeat_counter += 1
                     logging.info("[Main] Detected repeated action.")
@@ -983,7 +965,7 @@ def main():
             else:
                 logging.info(f"[Main] No valid product result for website: {website}")
 
-        # 若本任務收集到任何商品結果，則呼叫 Reflection Agent
+        # HW2 若本任務收集到任何商品結果，則呼叫 Reflection Agent、Debater Agent
         if product_results:
             reflection_response = call_reflection_agent(
                 args, client, product_results,
@@ -1004,7 +986,7 @@ def main():
                         reflection_response = call_reflection_agent(
                             args, client, product_results,
                             error_history=error_history
-                        )
+                        ) # 重新呼叫reflection_agent 1次 未來改成 regenerate_reflection_if_needed
                         logging.info("[Main] Revised Reflection Agent responsed")
                     else:
                         logging.info("[Main] Debater parse error or unknown accept => skip re-run.")
