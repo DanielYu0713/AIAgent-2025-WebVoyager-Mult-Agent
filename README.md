@@ -14,7 +14,7 @@
 </div>
 
 <div align="center">
-<img src="./assets/overview.png" width="90%">
+<img src="./assets/overall_process_crop.png" width="90%">
 </div>
 
 ## Introduction
