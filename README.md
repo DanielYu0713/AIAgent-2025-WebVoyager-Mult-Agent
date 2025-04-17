@@ -103,7 +103,7 @@ For **Windows users**, you can run the agent directly:
 
 After execution, the system selects the lowest-priced product and generates a final report. Example output:
 
-\`\`\`
+```
 Product: Bluetooth speaker (黑色)
 Website: Amazon
 Price: $21.99
@@ -111,7 +111,7 @@ Price: $21.99
 Product: JBL Go4 Bluetooth Wireless Speaker
 Website: Target
 Price: $39.99
-\`\`\`
+```
 
 
 > **Reflection Agent’s Analysis**  
