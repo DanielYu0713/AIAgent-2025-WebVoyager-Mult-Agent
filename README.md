@@ -16,6 +16,7 @@
 <img src="./assets/overall_process_crop.png" width="90%">
 </div>
 
+<<<<<<< HEAD
 ## (New Update) PDF RAG Processing Pipeline
 
 This section is responsible for breaking the original PDF manual into modular pieces and structuring them into a vector database for efficient RAG retrieval. The workflow includes:
@@ -132,6 +133,8 @@ Automatically generate a structured, actionable manual by combining RAG-retrieve
    manual = manual_gen.generate_instruction_manual()
    print(manual)
 
+=======
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 ## Introduction
 
 This repository contains the code for **WebPriceCompare**, an AI-powered web agent designed to compare product prices across multiple e-commerce websites. This project is based on **WebVoyager** ([original repo](https://arxiv.org/abs/2401.13919)) and has been modified to enable automated price comparisons.
@@ -222,8 +225,12 @@ For **Windows users**, you can run the agent directly:
 - `--text_only`: Enable text-based navigation (without images).
 - `--temperature`: Control randomness of AI responses.
 
+<<<<<<< HEAD
 
 ## Results and Evaluation
+=======
+## Results and Evaluation (New Update)
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 
 After execution, the system selects the lowest-priced product and generates a final report. Example output:
 
@@ -255,20 +262,32 @@ Price: $39.99
 
 ---
 
+<<<<<<< HEAD
 ## Agent Architecture
+=======
+## Agent Architecture (New Update)
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **Executor Agent**: Drives the browsing loop, calls GPT‑4o-mini to generate “Thought”/“Action”, parses them, and executes via Selenium.  
 - **Error Grounding Agent**: After each action (>1), analyzes screenshot vs. intended Thought, returns `Errors: Yes/No` + explanation, which is injected into the next prompt.  
 - **Reflection Agent**: After collecting multiple candidate products, compares on brand reputation, discount, shipping, and outputs a detailed chain‑of‑thought final recommendation.  
 - **Debater Agent**: Reviews the Reflection Agent’s decision (Accept: Yes/No). If rejected, triggers a re‑reflection cycle.  
 
+<<<<<<< HEAD
 ## Error Analysis & Strategy Adjustment
+=======
+## Error Analysis & Strategy Adjustment (New Update)
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **Structured Error History**: All failures (`error_type`, `iteration`, `message`) are logged into a global `error_history`.  
 - **Automated EGA Calls**: Each iteration wraps a call to the Error Grounding Agent, feeding back errors into prompts for self‑correction.  
 - **Format & Exception Handling**:  
   - Enhanced `extract_information` supports multiple scroll syntaxes and auto‑fills missing `Thought:`.  
   - Main loop catches stale element references, invalid indices, and format errors—logging and retrying accordingly.
 
+<<<<<<< HEAD
 ## Prompt Enhancements
+=======
+## Prompt Enhancements (New Update)
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **System Prompts** now enforce:  
   - **“Scroll at least twice and collect ≥2 candidates before final decision.”**  
   - **“Use only `Answer; …` for the final answer.”**  
@@ -276,12 +295,20 @@ Price: $39.99
 - **`SYSTEM_PREVIOUS_STEP`** upgraded with 6 concrete guidelines (avoid repeats, always scroll, heed EGA feedback, etc.).  
 - Separate constants for Reflection, Debater, Orchestration, and EGA prompts, clarifying each agent’s contract.
 
+<<<<<<< HEAD
 ## Utility Functions Enhancements
+=======
+## Utility Functions Enhancements (New Update)
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **Scroll Parsing**: `extract_information` now handles both `Scroll [n]; down` and `Scroll down; [n]`.  
 - **`print_message` Simplification**: Only skips `system` messages and extracts the final “Answer” into structured product info.  
 - **Context Clipping**: Improved `clip_message_and_obs(_text_only)` for screenshots, PDFs, and text‑only modes to keep prompts concise.
 
+<<<<<<< HEAD
 ## CLI & Run Enhancements
+=======
+## CLI & Run Enhancements (New Update)
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **New Flags**:  
   - `--trajectory`: record full iteration history in prompts.  
   - `--error_max_reflection_iter`: max retries for re‑reflection cycles.  

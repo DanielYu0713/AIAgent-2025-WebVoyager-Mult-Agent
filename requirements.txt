@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 openai==1.78.1          # 官方 Python SDK for OpenAI API 
 selenium==4.32.0        # 瀏覽器自動化框架 
 PyAutoGUI==0.9.54       # 螢幕／滑鼠鍵盤自動化 
@@ -10,3 +11,8 @@ pytesseract==0.3.13     # Tesseract OCR Python 介面
 Pillow==11.2.1          # 圖像處理 (PIL Fork) 
 numpy==2.2.5            # 陣列運算基礎套件 
 typing-extensions==4.13.2  # 額外型別提示支援 
+=======
+openai==1.1.1
+selenium==4.15.2
+pillow==10.1.0
+>>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
