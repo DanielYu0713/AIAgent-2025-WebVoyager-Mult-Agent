@@ -16,125 +16,6 @@
 <img src="./assets/overall_process_crop.png" width="90%">
 </div>
 
-<<<<<<< HEAD
-## (New Update) PDF RAG Processing Pipeline
-
-This section is responsible for breaking the original PDF manual into modular pieces and structuring them into a vector database for efficient RAG retrieval. The workflow includes:
-
-1. **Document Parsing and Text Extraction**
-   - **pdf_to_text**: Use `pdfplumber` to extract searchable text; if a page has no text (e.g., it’s a scanned image), invoke OCR with `pytesseract` to recognize text on the image (supports Traditional Chinese, Japanese, etc.).
-   - **pdf_to_markdown** (optional): If you need to annotate screenshots or tables further, use `pymupdf` to generate Markdown and preserve image paths for downstream enrichment.
-
-2. **TOC Parsing and Section Splitting**
-   - If the PDF includes a table of contents, extract the page–section mapping and split the file by section.
-   - Otherwise, split by “every N pages” or when encountering large headings to ensure semantic units remain coherent.
-
-3. **Chunking Strategy**
-   - **TokenTextSplitter**: Defaults to `chunk_size=500` and `chunk_overlap=100` characters, with `splitter_type="token"`.
-   - **RecursiveCharacterTextSplitter**: For more natural breakpoints, switch to `splitter_type="recursive"`, prioritizing punctuation and line breaks.
-   - Users can fine-tune `chunk_size` and `chunk_overlap` to adapt to different manuals’ text density.
-
-4. **Metadata Organization**
-   - Each chunk is tagged with:
-     - `source`: original file path  
-     - `section`: section title  
-     - `page`: starting page number  
-     - `timestamp`: file’s last modification time (ISO format)  
-   - These fields enable filtering and re-ranking during retrieval.
-
-5. **Vectorization and Indexing**
-   - Use `EmbeddingFactory` (default: `OpenAIEmbeddings`) to convert each text segment into a vector.
-   - Store vectors and metadata in a Chroma vector database, with persistence (`persist_directory`) and multi-task sharing support.
-
-6. **Quick Start Example**
-   ```bash
-   from pdf_rag import PDFEnhancementPipeline
-
-   pipeline = PDFEnhancementPipeline(
-       openai_api_key="YOUR_API_KEY",
-       persist_directory="./chroma_db"
-   )
-   pipeline.process_pdf(
-       pdf_path="data/manual.pdf",
-       output_dir="manual_output",
-       add_image_descriptions=False,
-       index_for_rag=True,
-       rag_mode="overwrite",
-       use_ocr=True,
-       chunk_size=600,
-       chunk_overlap=120,
-   )  
-
-## (New Update) Automated Instruction Manual Generation
-
-Automatically generate a structured, actionable manual by combining RAG-retrieved passages with prompt engineering.
-
-1. **Retrieval Preparation**
-   - **Inputs**:  
-     - `task_goal` (the user’s objective)  
-     - `current_intent` (agent’s intent)  
-     - RAG search parameters (`k`, `summarize`)  
-   - RAGEngine re-ranks results based on intent and query, returning the top `k` chunks. Long chunks can be summarized to the “first 200 + last 200 characters.”
-
-2. **Prompt Assembly**
-   - **System Prompt**  
-     - Define role (e.g., “You are the instruction-manual author for WebVoyager.”)  
-     - Enforce strict formatting: numbered steps, verbs at the start.  
-     - Enable `step_tracker` to label “Step X/Y”; enable `hint_markers` to insert hint labels.
-     - Example :
-       ```
-        Task Goal: 在 Amazon.jp 搜尋並比較『アミノバイタル タブレット』和『DHC マルチビタミン』
-        Steps:
-        1. 開啟瀏覽器並前往 https://www.amazon.co.jp/
-        2. 在搜尋框輸入「アミノバイタル タブレット」並按放大鏡圖示執行搜尋 (引自段落 #[1])。
-        3. 在左側篩選面板設定價格區間，拖動價格滑桿並點擊「検索」更新結果 (引自段落 #[1])。
-        4. 在搜尋結果頁瀏覽五個商品，快速比較它們的名稱、價格與星級評分摘要。
-        5. 點擊評價星數 ≧ 4 星的第一個商品，進入詳細頁。
-        6. 點擊「カスタマーレビュー」標籤，切換到評論區。
-        7. 閱讀前五則高評分評論，確認產品真實用戶回饋。
-       ```
-   - **In-Context Example**: Provide a brief formatted example to align the model’s output style.  
-   - **Document Block**: List each chunk in order, label as `[Index] Section: … (p.X)`, and include its summarized `content`.  
-   - **User Instruction**  
-     - Restate the `task_goal`.  
-     - Remind: “Only cite the above passages; do not fabricate.”  
-     - When citing a chunk, annotate `(from chunk #idx)`.
-
-3. **Calling the LLM**
-   - Use `gpt-4o-mini` (or another specified model) for Chat Completion.  
-   - Set `temperature` around `0.3` to balance creativity and stability.  
-   - Recommend `max_tokens` below `500` to avoid hitting the token limit.
-
-4. **Post-Processing**
-   - Split the LLM’s reply by line; treat each line as a discrete step.  
-   - **Options**:  
-     - Take the first N lines as a “concise manual,” or  
-     - Keep all steps and include section headings/indexes.  
-   - For JSON output (`instruction_format="json_blocks"`), convert lines into a list of JSON blocks for programmatic use.
-
-5. **Full Usage Example**
-   ```python
-   from instruction_manual_generator import InstructionManualGenerator
-   import logging
-
-   # Assume `chunks` is the list returned from pipeline.search()
-   chunks = [...]
-
-   # Generate the manual
-   manual_gen = InstructionManualGenerator(
-       openai_api_key="YOUR_API_KEY",
-       task_goal="Search and compare “Amino Vital Tablets” and “DHC Multivitamins” on Amazon.jp",
-       results=chunks,
-       logger=logging.getLogger(),
-       instruction_format="text_steps",
-       step_tracker=True,
-       hint_markers=True
-   )
-   manual = manual_gen.generate_instruction_manual()
-   print(manual)
-
-=======
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 ## Introduction
 
 This repository contains the code for **WebPriceCompare**, an AI-powered web agent designed to compare product prices across multiple e-commerce websites. This project is based on **WebVoyager** ([original repo](https://arxiv.org/abs/2401.13919)) and has been modified to enable automated price comparisons.
@@ -225,12 +106,7 @@ For **Windows users**, you can run the agent directly:
 - `--text_only`: Enable text-based navigation (without images).
 - `--temperature`: Control randomness of AI responses.
 
-<<<<<<< HEAD
-
-## Results and Evaluation
-=======
 ## Results and Evaluation (New Update)
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 
 After execution, the system selects the lowest-priced product and generates a final report. Example output:
 
@@ -262,32 +138,20 @@ Price: $39.99
 
 ---
 
-<<<<<<< HEAD
-## Agent Architecture
-=======
 ## Agent Architecture (New Update)
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **Executor Agent**: Drives the browsing loop, calls GPT‑4o-mini to generate “Thought”/“Action”, parses them, and executes via Selenium.  
 - **Error Grounding Agent**: After each action (>1), analyzes screenshot vs. intended Thought, returns `Errors: Yes/No` + explanation, which is injected into the next prompt.  
 - **Reflection Agent**: After collecting multiple candidate products, compares on brand reputation, discount, shipping, and outputs a detailed chain‑of‑thought final recommendation.  
 - **Debater Agent**: Reviews the Reflection Agent’s decision (Accept: Yes/No). If rejected, triggers a re‑reflection cycle.  
 
-<<<<<<< HEAD
-## Error Analysis & Strategy Adjustment
-=======
 ## Error Analysis & Strategy Adjustment (New Update)
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **Structured Error History**: All failures (`error_type`, `iteration`, `message`) are logged into a global `error_history`.  
 - **Automated EGA Calls**: Each iteration wraps a call to the Error Grounding Agent, feeding back errors into prompts for self‑correction.  
 - **Format & Exception Handling**:  
   - Enhanced `extract_information` supports multiple scroll syntaxes and auto‑fills missing `Thought:`.  
   - Main loop catches stale element references, invalid indices, and format errors—logging and retrying accordingly.
 
-<<<<<<< HEAD
-## Prompt Enhancements
-=======
 ## Prompt Enhancements (New Update)
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **System Prompts** now enforce:  
   - **“Scroll at least twice and collect ≥2 candidates before final decision.”**  
   - **“Use only `Answer; …` for the final answer.”**  
@@ -295,20 +159,12 @@ Price: $39.99
 - **`SYSTEM_PREVIOUS_STEP`** upgraded with 6 concrete guidelines (avoid repeats, always scroll, heed EGA feedback, etc.).  
 - Separate constants for Reflection, Debater, Orchestration, and EGA prompts, clarifying each agent’s contract.
 
-<<<<<<< HEAD
-## Utility Functions Enhancements
-=======
 ## Utility Functions Enhancements (New Update)
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **Scroll Parsing**: `extract_information` now handles both `Scroll [n]; down` and `Scroll down; [n]`.  
 - **`print_message` Simplification**: Only skips `system` messages and extracts the final “Answer” into structured product info.  
 - **Context Clipping**: Improved `clip_message_and_obs(_text_only)` for screenshots, PDFs, and text‑only modes to keep prompts concise.
 
-<<<<<<< HEAD
-## CLI & Run Enhancements
-=======
 ## CLI & Run Enhancements (New Update)
->>>>>>> 27793593bb289cb912a0da4d762cf462dcc20680
 - **New Flags**:  
   - `--trajectory`: record full iteration history in prompts.  
   - `--error_max_reflection_iter`: max retries for re‑reflection cycles.  
